@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AttachementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallController;
@@ -105,6 +106,21 @@ Route::prefix('v1')->group(function () {
         // ROUTES ADMIN
         // ========================================
         Route::middleware('is.admin')->group(function () {
+            Route::prefix('admin/dashboard')->group(function () {
+                Route::get('/stats', [AdminDashboardController::class, 'getStatistics']);
+                Route::get('/recent-users', [AdminDashboardController::class, 'getRecentUsers']);
+                Route::get('/recent-projects', [AdminDashboardController::class, 'getRecentProjects']);
+                Route::get('/recent-services', [AdminDashboardController::class, 'getRecentServices']);
+                Route::get('/user-type-breakdown', [AdminDashboardController::class, 'getUserTypeBreakdown']);
+                Route::get('/project-status-breakdown', [AdminDashboardController::class, 'getProjectStatusBreakdown']);
+                Route::get('/service-status-breakdown', [AdminDashboardController::class, 'getServiceStatusBreakdown']);
+                Route::get('/monthly-registrations', [AdminDashboardController::class, 'getMonthlyRegistrations']);
+                Route::get('/monthly-projects', [AdminDashboardController::class, 'getMonthlyProjects']);
+                Route::get('/top-categories', [AdminDashboardController::class, 'getTopCategories']);
+                Route::get('/top-skills', [AdminDashboardController::class, 'getTopSkills']);
+                Route::get('/overview', [AdminDashboardController::class, 'getOverview']);
+            });
+
             Route::prefix('services')->group(function () {
                 Route::get('/pending', [ServiceController::class, 'pendingServices']);
                 Route::post('/{id}/approve', [ServiceController::class, 'approve']);
