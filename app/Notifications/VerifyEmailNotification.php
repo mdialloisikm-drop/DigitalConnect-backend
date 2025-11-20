@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class VerifyEmailNotification extends Notification
+class VerifyEmailNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     protected $token;
@@ -35,7 +35,8 @@ class VerifyEmailNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $verificationUrl = config('app.frontend_url') . '/verify-email?token=' . $this->token . '&email=' . urlencode($notifiable->email);
+        $frontendUrl = config('app.frontend_url', 'http://localhost:4200');
+        $verificationUrl = $frontendUrl . '/auth/verify-email?email=' . urlencode($notifiable->email) . '&token=' . $this->token;
         return (new MailMessage)
             ->subject('Vérification de votre adresse email')
             ->greeting('Cher ' . $notifiable->full_name . ' !')

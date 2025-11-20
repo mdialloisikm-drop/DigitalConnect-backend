@@ -23,7 +23,7 @@ class ProjectService
             'contract',
             'attachments',
             'tasks'
-        ])->orderBy('created_at', 'desc')->get();
+        ])->orderBy('created_at', 'desc')->paginate(15);
     }
 
     /**
@@ -41,7 +41,7 @@ class ProjectService
                 'tasks'
             ])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(15);
     }
 
     /**
@@ -58,7 +58,7 @@ class ProjectService
                 'tasks'
             ])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(15);
     }
 
     /**
@@ -83,7 +83,7 @@ class ProjectService
                 'tasks'
             ])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(15);
     }
 
     /**

@@ -55,7 +55,7 @@ class ServiceService
                 'offers'
             ])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(15);
     }
 
     /**

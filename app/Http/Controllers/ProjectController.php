@@ -71,7 +71,7 @@ class ProjectController extends Controller
     public function store(ProjectFormRequest $request)
     {
         try {
-            $project = $this->projectService->store($request->validated());
+            $project = $this->projectService->store($request);
             return response()->json([
                 'message' => 'Projet créé avec succès. Il sera visible après validation par l\'administrateur.',
                 'project' => $project

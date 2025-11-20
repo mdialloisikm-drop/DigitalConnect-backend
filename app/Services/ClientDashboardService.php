@@ -24,34 +24,46 @@ class ClientDashboardService
 
         // ✅ OPTIMISATION 1 : Statistiques des projets (1 seule requête SQL)
         $projectStats = Project::where('client_id', $clientId)
-            ->selectRaw('
+            ->selectRaw("
                 COUNT(*) as total_projects,
-                SUM(CASE WHEN status IN ("open", "in_progress") THEN 1 ELSE 0 END) as active_projects,
-                SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed_projects
-            ')
+                SUM(CASE WHEN status IN ('open', 'in_progress') THEN 1 ELSE 0 END) as active_projects,
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_projects
+            ")
             ->first();
 
         // ✅ OPTIMISATION 2 : Statistiques des propositions + total dépensé (1 seule requête SQL)
-        $proposalStats = Proposal::whereIn('project_id', function ($query) use ($clientId) {
+        $proposalStats = Proposal::whereIn('project_id', function($query) use ($clientId) {
             $query->select('id')
                 ->from('projects')
                 ->where('client_id', $clientId);
         })
-            ->selectRaw('
+            ->selectRaw("
                 COUNT(*) as total_proposals,
-                SUM(CASE WHEN status = "pending" THEN 1 ELSE 0 END) as pending_proposals,
-                COALESCE(SUM(CASE WHEN status = "accepted" THEN proposed_amount ELSE 0 END), 0) as total_spent
-            ')
+                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_proposals,
+                SUM(CASE WHEN status = 'accepted' THEN 1 ELSE 0 END) as accepted_proposals,
+                SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected_proposals
+            ")
             ->first();
+
+        // Total dépensé (basé sur les propositions acceptées)
+        $totalSpent = Proposal::whereIn('project_id', function($query) use ($clientId) {
+            $query->select('id')
+                ->from('projects')
+                ->where('client_id', $clientId);
+        })
+            ->where('status', 'accepted')
+            ->sum('proposed_amount');
 
         // ✅ Retourner les statistiques
         return [
-            'total_projects' => $projectStats->total_projects ?? 0,
-            'active_projects' => $projectStats->active_projects ?? 0,
-            'completed_projects' => $projectStats->completed_projects ?? 0,
-            'total_spent' => round($proposalStats->total_spent ?? 0),
-            'total_proposals' => $proposalStats->total_proposals ?? 0,
-            'pending_proposals' => $proposalStats->pending_proposals ?? 0,
+            'total_projects' => (int) $projectStats->total_projects ?? 0,
+            'active_projects' => (int) $projectStats->active_projects ?? 0,
+            'completed_projects' => (int) $projectStats->completed_projects ?? 0,
+            'total_spent' => (float) $totalSpent ?? 0.0,
+            'total_proposals' => (int) $proposalStats->total_proposals ?? 0,
+            'pending_proposals' => (int) $proposalStats->pending_proposals ?? 0,
+            'accepted_proposals' => (int) $proposalStats->accepted_proposals ?? 0,
+            'rejected_proposals' => (int) $proposalStats->rejected_proposals ?? 0,
         ];
     }
 
