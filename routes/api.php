@@ -129,6 +129,16 @@ Route::prefix('v1')->group(function () {
                 Route::get('/statistics', [ServiceController::class, 'statistics']);
             });
 
+            // MODÉRATION DES PROJETS
+            Route::prefix('admin/projects')->group(function () {
+                Route::get('/pending', [ProjectController::class, 'pendingProjects']); // Liste des projets en attente
+                Route::post('/{id}/approve', [ProjectController::class, 'approve']); // Approuver un projet
+                Route::post('/{id}/reject', [ProjectController::class, 'reject']); // Rejeter un projet
+                Route::post('/{id}/archive', [ProjectController::class, 'archive']); // Archiver un projet
+                Route::get('/statistics', [ProjectController::class, 'statistics']); // Statistiques
+                Route::get('/{project}/tasks', [ProjectTaskController::class, 'index']);
+            });
+
             // Categories
             Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
 
@@ -147,14 +157,6 @@ Route::prefix('v1')->group(function () {
             Route::get('orders', [OrderController::class, 'index']);
             Route::get('/contracts', [ContractController::class, 'index']);
 
-            // MODÉRATION DES PROJETS
-            Route::prefix('projects')->group(function () {
-                Route::get('/pending', [ProjectController::class, 'pendingProjects']); // Liste des projets en attente
-                Route::post('/{id}/approve', [ProjectController::class, 'approve']); // Approuver un projet
-                Route::post('/{id}/reject', [ProjectController::class, 'reject']); // Rejeter un projet
-                Route::post('/{id}/archive', [ProjectController::class, 'archive']); // Archiver un projet
-                Route::get('/statistics', [ProjectController::class, 'statistics']); // Statistiques
-            });
 
             // Résoudre un litige de contrat
             Route::patch('/contracts/{id}/resolve-dispute', [ContractController::class, 'resolveDispute']);
