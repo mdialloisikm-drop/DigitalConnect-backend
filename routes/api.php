@@ -9,6 +9,7 @@ use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DeviceTokenController;
+use App\Http\Controllers\FreelanceDashboardController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProjectController;
@@ -121,7 +122,7 @@ Route::prefix('v1')->group(function () {
                 Route::get('/overview', [AdminDashboardController::class, 'getOverview']);
             });
 
-            Route::prefix('services')->group(function () {
+            Route::prefix('admin/services')->group(function () {
                 Route::get('/pending', [ServiceController::class, 'pendingServices']);
                 Route::post('/{id}/approve', [ServiceController::class, 'approve']);
                 Route::post('/{id}/reject', [ServiceController::class, 'reject']);
@@ -259,6 +260,20 @@ Route::prefix('v1')->group(function () {
             Route::post('orders/{id}/start', [OrderController::class, 'startOrder']);
             Route::post('orders/{id}/deliver', [OrderController::class, 'deliverOrder']);
             Route::post('orders/{id}/cancel', [OrderController::class, 'cancel']);
+
+            // Dashboard Freelance
+            Route::prefix('freelance/dashboard')->group(function () {
+                Route::get('/stats', [FreelanceDashboardController::class, 'getStatistics']);
+                Route::get('/recent-services', [FreelanceDashboardController::class, 'getRecentServices']);
+                Route::get('/recent-orders', [FreelanceDashboardController::class, 'getRecentOrders']);
+                Route::get('/recent-proposals', [FreelanceDashboardController::class, 'getRecentProposals']);
+                Route::get('/recent-contracts', [FreelanceDashboardController::class, 'getRecentContracts']);
+                Route::get('/service-status-breakdown', [FreelanceDashboardController::class, 'getServiceStatusBreakdown']);
+                Route::get('/order-status-breakdown', [FreelanceDashboardController::class, 'getOrderStatusBreakdown']);
+                Route::get('/monthly-earnings', [FreelanceDashboardController::class, 'getMonthlyEarnings']);
+                Route::get('/overview', [FreelanceDashboardController::class, 'getOverview']);
+            });
+
         });
 
         // ========================================

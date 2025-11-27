@@ -4,12 +4,10 @@ namespace App\Services;
 
 use App\Http\Requests\OrderFormRequest;
 use App\Models\Order;
-use App\Models\Service;
 use App\Models\Attachement;
 use App\Models\ServiceOffer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class OrderService
@@ -38,9 +36,10 @@ class OrderService
         if ($user->user_type === 'client') {
             return Order::where('client_id', $user->client->id)
                 ->with([
-                    'service.freelance.user',
-                    'service.category',
-                    'service.images',
+                    'serviceOffer.service.freelance.user',
+                    'serviceOffer.service.category',
+                    'serviceOffer.service.images',
+                    'client.user',
                     'deliverables',
                     'attachments'
                 ])
@@ -52,8 +51,9 @@ class OrderService
                 $query->where('freelance_id', $user->freelance->id);
             })
                 ->with([
-                    'service.category',
-                    'service.images',
+                    'serviceOffer.service.category',
+                    'serviceOffer.service.images',
+                    'serviceOffer.service.offers',
                     'client.user',
                     'deliverables',
                     'attachments'
