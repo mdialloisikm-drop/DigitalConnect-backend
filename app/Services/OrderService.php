@@ -51,6 +51,7 @@ class OrderService
                 $query->where('freelance_id', $user->freelance->id);
             })
                 ->with([
+                    'serviceOffer',
                     'serviceOffer.service.category',
                     'serviceOffer.service.images',
                     'serviceOffer.service.offers',
@@ -137,9 +138,10 @@ class OrderService
     public function show(string $id)
     {
         $order = Order::with([
-            'service.freelance.user',
-            'service.category',
-            'service.images',
+            'serviceOffer',
+            'serviceOffer.service.freelance.user',
+            'serviceOffer.service.category',
+            'serviceOffer.service.images',
             'client.user',
             'deliverables',
             'attachments'
@@ -152,7 +154,7 @@ class OrderService
             throw new \Exception('Vous ne pouvez pas voir cette commande.');
         }
 
-        if ($user->user_type === 'freelance' && $order->service->freelance_id !== $user->freelance->id) {
+        if ($user->user_type === 'freelance' && $order->serviceOffer->service->freelance_id !== $user->freelance->id) {
             throw new \Exception('Vous ne pouvez pas voir cette commande.');
         }
 

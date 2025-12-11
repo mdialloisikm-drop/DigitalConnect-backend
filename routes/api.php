@@ -10,6 +10,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DeviceTokenController;
 use App\Http\Controllers\FreelanceDashboardController;
+use App\Http\Controllers\FreelanceProfileController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProjectController;
@@ -18,7 +19,6 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,6 +51,12 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('skills', SkillController::class)->only(['index', 'show']);
 
     Route::middleware('auth:api')->group(function () {
+
+        Route::prefix('freelances')->group(function () {
+            Route::get('/filters/available', [FreelanceProfileController::class, 'availableFilters']);
+            Route::get('/', [FreelanceProfileController::class, 'index']);
+            Route::get('/{id}', [FreelanceProfileController::class, 'show']);
+        });
 
         Route::prefix('conversations')->group(function () {
             Route::get('/', [ConversationController::class, 'index']);
@@ -243,6 +249,8 @@ Route::prefix('v1')->group(function () {
             Route::get('proposals/{id}', [ProposalController::class, 'show']);
             Route::put('proposals/{id}', [ProposalController::class, 'update']);
             Route::delete('proposals/{id}', [ProposalController::class, 'destroy']);
+
+            Route::get('projects/{project}/tasks', [ProjectTaskController::class, 'index']);
 
             // Gestion des tâches (FREELANCE - changement de statut uniquement)
             Route::prefix('tasks/{task}')->group(function () {

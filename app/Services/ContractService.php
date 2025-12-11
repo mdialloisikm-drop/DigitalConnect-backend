@@ -161,7 +161,7 @@ class ContractService
             "Objet du contrat:\n" .
             "Projet: {$project->title}\n\n" .
             "Description:\n{$project->description}\n\n" .
-            "Montant convenu: {$proposal->proposed_amount} €\n" .
+            "Montant convenu: {$proposal->proposed_amount} $\n" .
             "Durée estimée: {$proposal->proposed_duration} jours\n\n" .
             "Proposition du freelance:\n{$proposal->cover_letter}\n\n" .
             "Date de début: " . Carbon::now()->format('d/m/Y') . "\n" .

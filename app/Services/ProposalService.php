@@ -251,19 +251,23 @@ class ProposalService
 
             // 3. Mettre à jour le statut du projet à "in_progress"
             $project = $proposal->project;
-            $start_date = now()->toDateString(); // Date d'aujourd'hui
-            $duration = $project->duration;
-            // Calculer le deadline : date_debut + durée
-            $deadline = now()->addDays($duration)->toDateString();
+            $start_date = now()->toDateString();
+
+            // ✅ CORRECTION : Utiliser la durée proposée par le freelance
+            $proposedDuration = $proposal->proposed_duration;
+
+            // Calculer le deadline : date_debut + durée proposée par le freelance
+            $deadline = now()->addDays($proposedDuration)->toDateString();
+
             $project->update([
                 'status' => 'in_progress',
-                'date_debut' => $start_date,
-                'deadline' => $deadline
+                'start_date' => $start_date,
+                'deadline' => $deadline,
+                'duration' => $proposedDuration  // ✅ Mettre à jour aussi la durée du projet
             ]);
 
             // 4. Créer ou récupérer la conversation entre le client et le freelance
             $conversation = $this->conversationService->createConversationFromProposal($proposal);
-
 
             // 5. GÉNÉRATION AUTOMATIQUE DU CONTRAT
             $contract = $this->contractService->createFromProposal($proposal);

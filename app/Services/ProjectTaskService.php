@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Contract;
 use App\Models\Project;
 use App\Models\ProjectTask;
 use Illuminate\Support\Facades\DB;
@@ -377,19 +378,33 @@ class ProjectTaskService
             throw new \Exception('Vous devez être authentifié.');
         }
 
+        // Admin a accès à tout
         if ($user->user_type === 'admin') {
             return true;
         }
 
-        if ($user->user_type === 'client' && $project->client_id === $user->client->id) {
-            return true;
+        // Client propriétaire du projet
+        if ($user->user_type === 'client') {
+            if ($user->client && $project->client_id === $user->client->id) {
+                return true;
+            }
         }
 
-        if ($user->user_type === 'freelance' && $project->contract && $project->contract->freelance_id === $user->freelance->id) {
-            return true;
+        // Freelance assigné via un contrat
+        if ($user->user_type === 'freelance') {
+            if ($user->freelance) {
+                // Vérifier s'il existe un contrat pour ce projet avec ce freelance
+                $hasContract = Contract::where('project_id', $project->id)
+                    ->where('freelance_id', $user->freelance->id)
+                    ->exists();
+
+                if ($hasContract) {
+                    return true;
+                }
+            }
         }
 
-        throw new \Exception('Vous n\'avez pas accès à ce projet.');
+        throw new \Exception('Accès refusé.');
     }
 
     /**
