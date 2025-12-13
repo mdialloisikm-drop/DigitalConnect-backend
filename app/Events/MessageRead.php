@@ -47,7 +47,8 @@ class MessageRead implements ShouldBroadcastNow
      */
     public function broadcastAs(): string
     {
-        return 'message.read';
+        //return 'message.read';
+        return 'messageRead';
     }
 
     /**

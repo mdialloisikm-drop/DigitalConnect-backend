@@ -19,7 +19,12 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'https://digital-connect-frontend.vercel.app',
+        'https://digitalconnects.live',
+        'https://www.digitalconnects.live',
+        'http://localhost:4200',
+    ],
 
     'allowed_origins_patterns' => [],
 

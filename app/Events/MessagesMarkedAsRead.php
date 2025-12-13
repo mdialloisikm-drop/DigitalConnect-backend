@@ -46,7 +46,8 @@ class MessagesMarkedAsRead implements ShouldBroadcastNow
      */
     public function broadcastAs(): string
     {
-        return 'messages.marked.read';
+        //return 'messages.marked.read';
+        return 'MessagesMarkedAsRead';
     }
 
     /**

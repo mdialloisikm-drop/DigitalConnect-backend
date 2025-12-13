@@ -50,7 +50,8 @@ class UserTyping implements ShouldBroadcast
      */
     public function broadcastAs(): string
     {
-        return 'user.typing';
+        //return 'user.typing';
+        return 'UserTyping';
     }
 
     /**

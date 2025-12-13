@@ -61,7 +61,8 @@ class MessageService
                 'sender_id' => $user->id
             ]);
 
-            broadcast(new MessageSent($message, $conversation));
+            //broadcast(new MessageSent($message, $conversation));
+            broadcast(new MessageSent($message, $conversation))->toOthers();
 
             DB::commit();
             return $message;
@@ -101,7 +102,8 @@ class MessageService
             $conversation->update(['last_message_at' => now()]);
             $message->load(['sender:id,full_name,avatar', 'attachments']);
 
-            broadcast(new MessageSent($message, $conversation));
+            //broadcast(new MessageSent($message, $conversation));
+            broadcast(new MessageSent($message, $conversation))->toOthers();
 
             DB::commit();
             return $message;
@@ -142,7 +144,8 @@ class MessageService
             $conversation->update(['last_message_at' => now()]);
             $message->load(['sender:id,full_name,avatar', 'attachments']);
 
-            broadcast(new MessageSent($message, $conversation));
+            //broadcast(new MessageSent($message, $conversation));
+            broadcast(new MessageSent($message, $conversation))->toOthers();
 
             DB::commit();
             return $message;
