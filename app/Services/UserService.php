@@ -35,7 +35,8 @@ class UserService
         // Gérer l'avatar
         if (isset($data['avatar']) && $data['avatar'] instanceof UploadedFile) {
             if ($user->avatar) {
-                Storage::disk('avatars')->delete($user->avatar);
+                //Storage::disk('avatars')->delete($user->avatar);
+                Storage::disk('s3')->delete($user->avatar);
             }
             $data['avatar'] = $this->storeAvatar($data['avatar']);
         }
@@ -103,7 +104,8 @@ class UserService
         $user = auth()->user();
 
         if ($user->avatar) {
-            Storage::disk('avatars')->delete($user->avatar);
+            //Storage::disk('avatars')->delete($user->avatar);
+            Storage::disk('s3')->delete($user->avatar);
         }
 
         $user->tokens()->delete();
@@ -142,7 +144,8 @@ class UserService
         }
 
         if ($user->avatar) {
-            Storage::disk('avatars')->delete($user->avatar);
+            //Storage::disk('avatars')->delete($user->avatar);
+            Storage::disk('s3')->delete($user->avatar);
         }
 
         $user->tokens()->delete();
@@ -154,8 +157,10 @@ class UserService
     private function storeAvatar(UploadedFile $file): string
     {
         $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $file->storeAs('', $filename, 'avatars');
-        return $filename;
+        //$file->storeAs('', $filename, 'avatars');
+        // ✅ CHANGEMENT: 'avatars' -> 's3'
+        $file->storeAs('avatars', $filename, 's3');
+        return 'avatars/' . $filename;
     }
 
     public function getFreelances()

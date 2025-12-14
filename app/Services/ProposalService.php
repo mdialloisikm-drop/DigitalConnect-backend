@@ -203,7 +203,8 @@ class ProposalService
         // Supprimer les pièces jointes
         foreach ($proposal->attachments as $attachment) {
             if ($attachment->format === 'file' && $attachment->file_path) {
-                Storage::disk('public')->delete($attachment->file_path);
+                //Storage::disk('public')->delete($attachment->file_path);
+                Storage::disk('s3')->delete($attachment->file_path);
             }
             $attachment->delete();
         }
@@ -333,7 +334,8 @@ class ProposalService
     {
         foreach ($files as $file) {
             $originalName = $file->getClientOriginalName();
-            $path = $file->store('proposals', 'public');
+            //$path = $file->store('proposals', 'public');
+            $path = $file->store('proposals', 's3');
 
             Attachement::create([
                 'attachable_type' => Proposal::class,
@@ -342,6 +344,8 @@ class ProposalService
                 'file_type' => 'attachment',
                 'file_name' => $originalName,
                 'file_path' => $path,
+                // ✅ AJOUT: Stocker l'URL S3 complète
+                'file_url' => Storage::disk('s3')->url($path),
                 'format' => 'file',
             ]);
         }

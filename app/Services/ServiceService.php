@@ -364,7 +364,9 @@ class ServiceService
             ->where('id', $imageId)
             ->firstOrFail();
 
-        Storage::disk('public')->delete($image->image_path);
+        // ✅ CHANGEMENT: 'public' -> 's3'
+        Storage::disk('s3')->delete($image->image_path);
+        //Storage::disk('public')->delete($image->image_path);
         $image->delete();
 
         return $service->load(['images', 'offers']);
@@ -373,11 +375,14 @@ class ServiceService
     private function storeImages(Service $service, array $images)
     {
         foreach ($images as $image) {
-            $path = $image->store('services', 'public');
+            // ✅ CHANGEMENT: 'public' -> 's3'
+            $path = $image->store('services', 's3');
+            //$path = $image->store('services', 'public');
 
             ServiceImage::create([
                 'service_id' => $service->id,
                 'image_path' => $path,
+                'image_url' => Storage::disk('s3')->url($path), // ✅ Ajouter l'URL S3
             ]);
         }
     }

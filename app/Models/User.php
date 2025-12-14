@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -126,4 +127,24 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->status === 'active';
     }
+
+    /**
+     * Accesseur pour obtenir l'URL complète de l'avatar
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if (!$this->avatar) {
+            return null;
+        }
+
+        // Si c'est déjà une URL complète, la retourner
+        if (str_starts_with($this->avatar, 'http')) {
+            return $this->avatar;
+        }
+
+        // Générer l'URL S3 (le chemin contient déjà 'avatars/')
+        return Storage::disk('s3')->url($this->avatar);
+    }
+
+    protected $appends = ['avatar_url'];
 }

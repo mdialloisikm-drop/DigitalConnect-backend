@@ -9,6 +9,7 @@ use App\Models\ServiceOffer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class OrderService
 {
@@ -342,7 +343,9 @@ class OrderService
     {
         foreach ($files as $file) {
             $originalName = $file->getClientOriginalName();
-            $path = $file->store('orders/attachments', 'public');
+            //$path = $file->store('orders/attachments', 'public');
+            // ✅ CHANGEMENT: 'public' -> 's3'
+            $path = $file->store('orders/attachments', 's3');
 
             Attachement::create([
                 'attachable_type' => Order::class,
@@ -351,6 +354,7 @@ class OrderService
                 'file_type' => 'attachment',
                 'file_name' => $originalName,
                 'file_path' => $path,
+                'file_url' => Storage::disk('s3')->url($path), // ✅ Ajouter l'URL
                 'format' => 'file',
             ]);
         }

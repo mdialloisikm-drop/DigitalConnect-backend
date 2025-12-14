@@ -7,6 +7,7 @@ use App\Mail\ProjectApprovedMail;
 use App\Models\Project;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectService
 {
@@ -115,7 +116,9 @@ class ProjectService
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $originalName = $file->getClientOriginalName();
-                $filePath = $file->store('projects/attachments', 'public');
+                //$filePath = $file->store('projects/attachments', 'public');
+                // ✅ CHANGEMENT: 'public' -> 's3'
+                $filePath = $file->store('projects/attachments', 's3');
 
                 $project->attachments()->create([
                     'uploaded_by' => $user->id,

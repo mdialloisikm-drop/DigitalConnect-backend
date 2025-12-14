@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Notifications\VerifyEmailNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
@@ -184,8 +185,10 @@ class AuthService
         $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
         // Stocker l'image dans le disk 'avatars'
-        $file->storeAs('', $filename, 'avatars');
+        //$file->storeAs('', $filename, 'avatars');
+        // ✅ CHANGEMENT:  'avatars' -> 's3'
+        $file->storeAs('avatars', $filename, 's3');
 
-        return $filename;
+        return 'avatars/' . $filename;
     }
 }

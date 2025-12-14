@@ -151,7 +151,8 @@ class AttachementService
 
         // Supprimer le fichier du storage si c'est un fichier
         if ($attachment->format === 'file' && $attachment->file_path) {
-            Storage::disk('public')->delete($attachment->file_path);
+            //Storage::disk('public')->delete($attachment->file_path);
+            Storage:: disk('s3')->delete($attachment->file_path);
         }
 
         $attachment->delete();
@@ -169,7 +170,8 @@ class AttachementService
 
         foreach ($files as $file) {
             $originalName = $file->getClientOriginalName();
-            $path = $file->store($folder, 'public');
+            //$path = $file->store($folder, 'public');
+            $path = $file->store($folder, 's3');
 
             $attachment = Attachement::create([
                 'attachable_type' => $type,
@@ -178,6 +180,7 @@ class AttachementService
                 'file_type' => $fileType,
                 'file_name' => $originalName,
                 'file_path' => $path,
+                'file_url' => Storage::disk('s3')->url($path), // ✅ Ajouter l'URL S3
                 'format' => 'file',
             ]);
 

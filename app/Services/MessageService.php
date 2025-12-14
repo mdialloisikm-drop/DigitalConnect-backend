@@ -85,7 +85,8 @@ class MessageService
 
         DB::beginTransaction();
         try {
-            $path = $voiceFile->store('messages/voice', 'public');
+            //$path = $voiceFile->store('messages/voice', 'public');
+            $path = $voiceFile->store('messages/voice', 's3');
 
             $message = Message::create([
                 'conversation_id' => $conversationId,
@@ -93,6 +94,7 @@ class MessageService
                 'message_type' => 'voice',
                 'content' => json_encode([
                     'path' => $path,
+                    'url' => Storage::disk('s3')->url($path), //nouveau
                     'size' => $voiceFile->getSize(),
                     'duration' => null,
                 ]),
@@ -126,7 +128,8 @@ class MessageService
         DB::beginTransaction();
         try {
             $originalName = $file->getClientOriginalName();
-            $path = $file->store('messages/files', 'public');
+            //$path = $file->store('messages/files', 'public');
+            $path = $file->store('messages/files', 's3');
 
             $message = Message::create([
                 'conversation_id' => $conversationId,
@@ -134,6 +137,7 @@ class MessageService
                 'message_type' => 'file',
                 'content' => json_encode([
                     'path' => $path,
+                    'url' => Storage:: disk('s3')->url($path), //nouveau
                     'name' => $originalName,
                     'size' => $file->getSize(),
                     'mime_type' => $file->getMimeType(),
@@ -242,7 +246,8 @@ class MessageService
         if (in_array($message->message_type, ['voice', 'file'])) {
             $content = json_decode($message->content, true);
             if (isset($content['path'])) {
-                Storage::disk('public')->delete($content['path']);
+                //Storage::disk('public')->delete($content['path']);
+                Storage::disk('s3')->delete($content['path']);
             }
         }
 
