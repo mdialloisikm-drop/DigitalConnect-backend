@@ -142,8 +142,12 @@ class User extends Authenticatable implements JWTSubject
             return $this->avatar;
         }
 
+        $avatarPath = str_starts_with($this->avatar, 'avatars/')
+            ? $this->avatar
+            : 'avatars/' . $this->avatar;
+
         // Générer l'URL S3 (le chemin contient déjà 'avatars/')
-        return Storage::disk('s3')->url($this->avatar);
+        return Storage::disk('s3')->url($avatarPath);
     }
 
     protected $appends = ['avatar_url'];
